@@ -78,20 +78,26 @@ process TRIMAL_CLEAN {
 }
 
 workflow {
-    if (!params.in) error 'Missing --in (e.g. --in ".fasta")'
+    // Check if the folder path was provided
+    if (!params.in) {
+        usage()
+        error "Missing required parameter: --in. Please provide the folder path (e.g., --in 'data')"
+    }
 
-    // 1. Fetch Reference
+    // Fetch Reference 
     ch_ref = FETCH_REFERENCE(params.accession)
 
-    // 2. Collect and Sort genomes into a single List
+    // Collect and Sort genomes from the folder
+    
     ch_genomes_sorted = Channel
-        .fromPath(params.in, checkIfExists: true)
+        .fromPath("${params.in}/*.fasta", checkIfExists: true)
+        .ifEmpty { error "No .fasta files found in directory: ${params.in}" }
         .toSortedList({ a, b -> a.name <=> b.name })
 
-    // 3. Combine: Pass the single ref and the list of genomes
+    //  Combine
     ch_combined = COMBINE_SEQUENCES(ch_ref, ch_genomes_sorted)
 
-    // 4. Align and Trim
+    // Align and Trim
     ch_align = MAFFT_ALIGN(ch_combined)
     TRIMAL_CLEAN(ch_align)
 }
