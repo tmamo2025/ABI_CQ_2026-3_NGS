@@ -78,7 +78,7 @@ process TRIMAL_CLEAN {
 }
 
 workflow {
-    if (!params.in) error 'Missing --in (e.g. --in "*.fasta")'
+    if (!params.in) error 'Missing --in (e.g. --in ".fasta")'
 
     // 1. Fetch Reference
     ch_ref = FETCH_REFERENCE(params.accession)
