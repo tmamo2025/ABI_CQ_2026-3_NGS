@@ -1,0 +1,18 @@
+# Nextflow
+.work/
+work/
+results/
+.nextflow*
+.nxf*
+
+# Conda
+conda/
+.env/
+
+# Input data
+*.fasta
+
+# OS / editor
+.DS_Store
+.vscode/
+
